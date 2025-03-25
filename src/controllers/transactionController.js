@@ -8,7 +8,7 @@ class TransactionController {
 
   async deposit(req, res) {
     try {
-      const { amount } = req.body;
+      const { amount, description } = req.body;
       const userId = req.user.id;
 
       if (!amount) {
@@ -24,7 +24,7 @@ class TransactionController {
         return res.status(404).json({ message: 'Account not found' });
       }
 
-      const transaction = await this.transactionService.deposit(account.id, amount);
+      const transaction = await this.transactionService.deposit(account.id, amount, description);
       res.status(201).json(transaction);
     } catch (error) {
       if (error instanceof Error) {
@@ -37,7 +37,7 @@ class TransactionController {
 
   async transfer(req, res) {
     try {
-      const { toAccountNumber, amount } = req.body;
+      const { toAccountNumber, amount, description, recipientRef } = req.body;
       const userId = req.user.id;
 
       if (!toAccountNumber || !amount) {
@@ -56,7 +56,9 @@ class TransactionController {
       const transaction = await this.transactionService.transfer(
         fromAccount.id,
         toAccountNumber,
-        amount
+        amount,
+        description,
+        recipientRef
       );
       res.status(201).json(transaction);
     } catch (error) {

@@ -7,7 +7,7 @@ class TransactionService {
     this.accountRepository = new AccountRepository();
   }
 
-  async deposit(accountId, amount) {
+  async deposit(accountId, amount, description) {
     if (amount <= 0) {
       throw new Error('Amount must be greater than 0');
     }
@@ -21,7 +21,8 @@ class TransactionService {
       type: 'DEPOSIT',
       amount,
       fromAccountId: accountId,
-      toAccountId: accountId
+      toAccountId: accountId,
+      description
     });
 
     await this.accountRepository.updateBalance(accountId, amount);
@@ -32,7 +33,7 @@ class TransactionService {
     };
   }
 
-  async transfer(fromAccountId, toAccountNumber, amount) {
+  async transfer(fromAccountId, toAccountNumber, amount, description, recipientRef) {
     if (amount <= 0) {
       throw new Error('Amount must be greater than 0');
     }
@@ -59,7 +60,9 @@ class TransactionService {
       type: 'TRANSFER',
       amount,
       fromAccountId: fromAccount.id,
-      toAccountId: toAccount.id
+      toAccountId: toAccount.id,
+      description,
+      recipientRef
     });
 
     await this.accountRepository.updateBalance(fromAccount.id, -amount);

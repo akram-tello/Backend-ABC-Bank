@@ -33,6 +33,8 @@ model Transaction {
   id          String   @id @default(uuid())
   amount      Float
   type        TransactionType
+  description String?
+  recipientRef String?
   fromAccountId String
   toAccountId   String
   fromAccount   Account  @relation("SentTransactions", fields: [fromAccountId], references: [id])
