@@ -6,6 +6,45 @@ class TransactionController {
     this.transactionService = new TransactionService();
   }
 
+  /**
+   * @swagger
+   * /api/transactions/deposit:
+   *   post:
+   *     summary: Deposit money into user's account
+   *     tags: [Transactions]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - amount
+   *             properties:
+   *               amount:
+   *                 type: number
+   *                 minimum: 0
+   *                 description: Amount to deposit
+   *     responses:
+   *       200:
+   *         description: Deposit successful
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: Deposit successful
+   *                 newBalance:
+   *                   type: number
+   *       400:
+   *         description: Invalid amount
+   *       401:
+   *         description: Unauthorized
+   */
   async deposit(req, res) {
     try {
       const { amount, description } = req.body;
@@ -35,6 +74,51 @@ class TransactionController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/transactions/transfer:
+   *   post:
+   *     summary: Transfer money to another account
+   *     tags: [Transactions]
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - recipientAccountNumber
+   *               - amount
+   *             properties:
+   *               recipientAccountNumber:
+   *                 type: string
+   *                 description: Account number of the recipient
+   *               amount:
+   *                 type: number
+   *                 minimum: 0
+   *                 description: Amount to transfer
+   *     responses:
+   *       200:
+   *         description: Transfer successful
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: Transfer successful
+   *                 newBalance:
+   *                   type: number
+   *       400:
+   *         description: Invalid amount or insufficient funds
+   *       401:
+   *         description: Unauthorized
+   *       404:
+   *         description: Recipient account not found
+   */
   async transfer(req, res) {
     try {
       const { toAccountNumber, amount, description, recipientRef } = req.body;
@@ -70,6 +154,49 @@ class TransactionController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/transactions/{accountId}:
+   *   get:
+   *     summary: Get transaction history for an account
+   *     tags: [Transactions]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: accountId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: Account ID
+   *     responses:
+   *       200:
+   *         description: List of transactions
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 type: object
+   *                 properties:
+   *                   id:
+   *                     type: string
+   *                   type:
+   *                     type: string
+   *                     enum: [DEPOSIT, TRANSFER]
+   *                   amount:
+   *                     type: number
+   *                   timestamp:
+   *                     type: string
+   *                     format: date-time
+   *                   status:
+   *                     type: string
+   *                     enum: [COMPLETED, FAILED]
+   *       401:
+   *         description: Unauthorized
+   *       404:
+   *         description: Account not found
+   */
   async getTransactions(req, res) {
     try {
       const { accountId } = req.params;
@@ -89,6 +216,37 @@ class TransactionController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/balance/{accountId}:
+   *   get:
+   *     summary: Get current account balance
+   *     tags: [Transactions]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: accountId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: Account ID
+   *     responses:
+   *       200:
+   *         description: Current account balance
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 balance:
+   *                   type: number
+   *                   description: Current account balance
+   *       401:
+   *         description: Unauthorized
+   *       404:
+   *         description: Account not found
+   */
   async getBalance(req, res) {
     try {
       const { accountId } = req.params;

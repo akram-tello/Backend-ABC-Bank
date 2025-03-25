@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./config/swagger');
 const { UserController } = require('./controllers/userController');
 const { TransactionController } = require('./controllers/transactionController');
 const { authenticateToken } = require('./middleware/auth');
@@ -20,6 +22,9 @@ const transactionController = new TransactionController();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Routes
 // Auth routes
