@@ -83,7 +83,7 @@ class TransactionService {
     
     return transactions.map(transaction => ({
       ...transaction,
-      direction: transaction.fromAccountId === accountId ? 'OUT' : 'IN'
+      direction: transaction.fromAccountId === accountId && transaction.type === 'TRANSFER' ? 'OUT' : 'IN'
     }));
   }
 
